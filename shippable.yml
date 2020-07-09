@@ -3,6 +3,9 @@ language: c
 compiler:
   - gcc
 
+install:
+  - sudo apt-get install cmake
+
 build:
   ci:
     - mkdir -p build/
