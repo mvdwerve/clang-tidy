@@ -4,6 +4,15 @@ language: c
 # Compiler selection
 compiler:
   - gcc
+addons:
+  apt:
+    packages:
+      - ninja
+      - ccache
+      
+cache:
+  directories:
+    - /home/travis/.ccache/
 
 # Build steps
 script: 
@@ -12,5 +21,5 @@ script:
   - git clone --depth 1 https://github.com/llvm/llvm-project.git
   - rm -r llvm-project/clang-tools-extra/clang-tidy
   - ln -s `cd .. && pwd -L` llvm-project/clang-tools-extra/clang-tidy
-  - cmake -DLLVM_ENABLE_PROJECTS="clang;clang-tools-extra" -DLLVM_USE_LINKER=gold -DCMAKE_BUILD_TYPE=Release -G "Unix Makefiles" llvm-project/llvm
-  - make -j4 clang-tidy
+  - cmake -DLLVM_ENABLE_PROJECTS="clang-tools-extra" -DLLVM_USE_LINKER=gold -DLLVM_CCACHE_BUILD=ON -DCMAKE_BUILD_TYPE=Release -G Ninja llvm-project/llvm
+  - ninja -j8 clang-tidy
