@@ -7,7 +7,7 @@ compiler:
 addons:
   apt:
     packages:
-      - ninja
+      - ninja-build
       - ccache
       
 cache:
