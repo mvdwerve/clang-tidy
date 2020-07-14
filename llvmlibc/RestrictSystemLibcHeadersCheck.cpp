@@ -11,6 +11,10 @@
 #include "clang/ASTMatchers/ASTMatchFinder.h"
 #include "clang/Lex/HeaderSearch.h"
 #include "clang/Lex/HeaderSearchOptions.h"
+#include "clang/Lex/Preprocessor.h"
+
+// FixItHint - Hint to check documentation script to mark this check as
+// providing a FixIt.
 
 namespace clang {
 namespace tidy {
@@ -18,12 +22,14 @@ namespace llvm_libc {
 
 namespace {
 
-class RestrictedIncludesPPCallbacks : public PPCallbacks {
+class RestrictedIncludesPPCallbacks
+    : public portability::RestrictedIncludesPPCallbacks {
 public:
   explicit RestrictedIncludesPPCallbacks(
       RestrictSystemLibcHeadersCheck &Check, const SourceManager &SM,
       const SmallString<128> CompilerIncudeDir)
-      : Check(Check), SM(SM), CompilerIncudeDir(CompilerIncudeDir) {}
+      : portability::RestrictedIncludesPPCallbacks(Check, SM),
+        CompilerIncudeDir(CompilerIncudeDir) {}
 
   void InclusionDirective(SourceLocation HashLoc, const Token &IncludeTok,
                           StringRef FileName, bool IsAngled,
@@ -33,8 +39,6 @@ public:
                           SrcMgr::CharacteristicKind FileType) override;
 
 private:
-  RestrictSystemLibcHeadersCheck &Check;
-  const SourceManager &SM;
   const SmallString<128> CompilerIncudeDir;
 };
 
@@ -45,18 +49,12 @@ void RestrictedIncludesPPCallbacks::InclusionDirective(
     bool IsAngled, CharSourceRange FilenameRange, const FileEntry *File,
     StringRef SearchPath, StringRef RelativePath, const Module *Imported,
     SrcMgr::CharacteristicKind FileType) {
-  if (SrcMgr::isSystem(FileType)) {
-    // Compiler provided headers are allowed (e.g stddef.h).
-    if (SearchPath == CompilerIncudeDir) return;
-    if (!SM.isInMainFile(HashLoc)) {
-      Check.diag(
-          HashLoc,
-          "system libc header %0 not allowed, transitively included from %1")
-          << FileName << SM.getFilename(HashLoc);
-    } else {
-      Check.diag(HashLoc, "system libc header %0 not allowed") << FileName;
-    }
-  }
+  // Compiler provided headers are allowed (e.g stddef.h).
+  if (SrcMgr::isSystem(FileType) && SearchPath == CompilerIncudeDir)
+    return;
+  portability::RestrictedIncludesPPCallbacks::InclusionDirective(
+      HashLoc, IncludeTok, FileName, IsAngled, FilenameRange, File, SearchPath,
+      RelativePath, Imported, FileType);
 }
 
 void RestrictSystemLibcHeadersCheck::registerPPCallbacks(
