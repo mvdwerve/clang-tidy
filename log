@@ -1,0 +1,26 @@
+   1  apt update && apt install -y build-essential cmake git ninja-build python3
+    2  git clone --depth 1 https://github.com/llvm/llvm-project.git
+    3  cd /llvm-project/ && git checkout -b release/10.xcd /llvm-project/ && git checkout -b release/10.x
+    4  cd /llvm-project/ && git checkout -b release/10.x
+    5  mkdir /llvm-project/build && cd /llvm-project/build && cmake -DLLVM_ENABLE_PROJECTS="clang;clang-tools-extra" -DLLVM_USE_LINKER=gold -DCMAKE_BUILD_TYPE=Release -G Ninja ../llvm
+    6  cd /llvm-project/build && ninja clang-tidy
+    7  cd bin
+    8  ls
+    9  clang-tidy
+   10  ./clang-tidy
+   11  clang-tidy --list-checks
+   12  ./clang-tidy --list-checks
+   13  ./clang-tidy * --list-checks
+   14  ./clang-tidy --checks=* --list-checks
+   15  ls -alh
+   16  diff
+   17  sed
+   18  history
+   19  sed -i
+   20  sed -i 's/add_subdirectory\(cppcoreguidelines\)/add_subdirectory\(copernica\)/g' ../../clang-tools-extra/clang-tidy/CMakeLists.txt
+   21  cat ../../clang-tools-extra/clang-tidy/CMakeLists.txt
+   22  sed -i 's/add_subdirectory(cppcoreguidelines)/add_subdirectory\(copernica\)/g' ../../clang-tools-extra/clang-tidy/CMakeLists.txt
+   23  cat ../../clang-tools-extra/clang-tidy/CMakeLists.txt
+   24  history
+   25  cat ../../clang-tools-extra/clang-tidy/ClangTidyForceLinker.h
+   26  history
