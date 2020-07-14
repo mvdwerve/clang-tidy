@@ -1,5 +1,7 @@
 FROM ubuntu:20.04
 
+ENV DEBIAN_FRONTEND noninteractive
+
 RUN apt update && apt install -y build-essential cmake git ninja-build python3
 RUN git clone --depth 1 https://github.com/llvm/llvm-project.git
 RUN cd /llvm-project/ && git checkout -b release/10.x

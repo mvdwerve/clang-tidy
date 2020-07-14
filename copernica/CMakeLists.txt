@@ -1,4 +1,7 @@
-set(LLVM_LINK_COMPONENTS support)
+set(LLVM_LINK_COMPONENTS
+  FrontendOpenMP
+  Support
+  )
 
 add_clang_library(clangTidyCopernicaModule
   AvoidGotoCheck.cpp
@@ -12,4 +15,17 @@ add_clang_library(clangTidyCopernicaModule
   clangTidy
   clangTidyReadabilityModule
   clangTidyUtils
+  
+  DEPENDS
+  omp_gen
+  )
+
+clang_target_link_libraries(clangTidyCopernicaModule
+  PRIVATE
+  clangAST
+  clangASTMatchers
+  clangBasic
+  clangLex
+  clangSerialization
+  clangTooling
   )
