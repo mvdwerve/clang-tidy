@@ -15,6 +15,7 @@
 #include "../modernize/UseOverrideCheck.h"
 #include "../readability/MagicNumbersCheck.h"
 #include "AvoidGotoCheck.h"
+#include "DoNotThrowFromNonConstructorsCheck.h"
 
 namespace clang {
 namespace tidy {
@@ -25,6 +26,8 @@ class CopernicaModule : public ClangTidyModule {
 public:
   void addCheckFactories(ClangTidyCheckFactories &CheckFactories) override {
     CheckFactories.registerCheck<AvoidGotoCheck>("copernica-avoid-goto");
+    CheckFactories.registerCheck<DoNotThrowFromNonConstructorsCheck>(
+        "copernica-do-not-throw-from-non-constructors");
   }
 };
 

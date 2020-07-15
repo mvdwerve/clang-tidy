@@ -5,5 +5,3 @@ sed -i 's/  clangTidyCppCoreGuidelinesModule/  clangTidyCopernicaModule\n  clang
 sed -i 's/This anchor is used to force the linker to link the CppCoreGuidelinesModule./\nextern volatile int CopernicaModuleAnchorSource; static int LLVM_ATTRIBUTE_UNUSED CopernicaModuleAnchorDestination = CopernicaModuleAnchorSource;/g' /llvm-project/clang-tools-extra/clang-tidy/ClangTidyForceLinker.h
 
 cat /llvm-project/clang-tools-extra/clang-tidy/ClangTidyForceLinker.h
-
-exit 1

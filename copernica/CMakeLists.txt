@@ -6,6 +6,7 @@ set(LLVM_LINK_COMPONENTS
 add_clang_library(clangTidyCopernicaModule
   AvoidGotoCheck.cpp
   CopernicaTidyModule.cpp
+  DoNotThrowFromNonConstructorsCheck.cpp
 
   LINK_LIBS
   clangAST
