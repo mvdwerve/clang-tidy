@@ -15,9 +15,7 @@ make -j4 clang-tidy
 
 ## Checks
 ### Todo
-- don't throw from publicly accessible methods (or methods in general)
 - no getAbc() and setAbc() as method names
-- private members should start with _
 - every line should have comment
 - comment out of sync between C++ and h
 - @params out of sync with actual function 
@@ -45,4 +43,5 @@ make -j4 clang-tidy
 - @throws missing / incorrect
 
 ### Done
-
+- don't throw from publicly accessible methods (or methods in general)
+- private members should start with _

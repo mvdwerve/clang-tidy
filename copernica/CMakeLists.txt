@@ -7,6 +7,7 @@ add_clang_library(clangTidyCopernicaModule
   AvoidGotoCheck.cpp
   CopernicaTidyModule.cpp
   DoNotThrowFromNonConstructorsCheck.cpp
+  MembersStartWithUnderscoreCheck.cpp
 
   LINK_LIBS
   clangAST

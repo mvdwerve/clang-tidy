@@ -18,22 +18,25 @@ namespace copernica {
 
 void DoNotThrowFromNonConstructorsCheck::registerMatchers(MatchFinder *Finder) {
   // look for matchers _not_ in the 
-  Finder->addMatcher(cxxThrowExpr(anyOf(unless(hasAncestor(cxxTryStmt())),
-                                    unless(hasAncestor(cxxConstructorDecl()))))
-                         .bind("throw"),
-                     this);
+  Finder->addMatcher(
+    // matches throw expressions
+    cxxThrowExpr(
+        // except if...
+        unless(
+            anyOf(
+                // we have a try statement surrounding it
+                hasAncestor(cxxTryStmt()), 
+                // or a constructor is declared
+                hasAncestor(cxxConstructorDecl())
+            )
+        )
+    ).bind("bad_throw"),
+    this);
 }
 
 void DoNotThrowFromNonConstructorsCheck::check(const MatchFinder::MatchResult &Result) {
-  // FIXME: Add callback implementation.
-  const auto *MatchedDecl = Result.Nodes.getNodeAs<Expr>("throw");
-  diag(MatchedDecl->getExprLoc(), "function is insufficiently awesome");
-  //return;
-  // if (MatchedDecl->getName().startswith("awesome_"))
-  //   return;
-  // 
-  // diag(MatchedDecl->getLocation(), "insert 'awesome'", DiagnosticIDs::Note)
-  //     << FixItHint::CreateInsertion(MatchedDecl->getLocation(), "awesome_");
+const auto *BadThrow = Result.Nodes.getNodeAs<CXXThrowExpr>("bad_throw");
+diag(BadThrow->getSubExpr()->getBeginLoc(), "uncaught exception in non-constructor") << BadThrow->getSourceRange();
 }
 
 } // namespace copernica

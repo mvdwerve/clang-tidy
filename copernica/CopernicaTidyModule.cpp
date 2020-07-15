@@ -16,6 +16,7 @@
 #include "../readability/MagicNumbersCheck.h"
 #include "AvoidGotoCheck.h"
 #include "DoNotThrowFromNonConstructorsCheck.h"
+#include "MembersStartWithUnderscoreCheck.h"
 
 namespace clang {
 namespace tidy {
@@ -28,6 +29,8 @@ public:
     CheckFactories.registerCheck<AvoidGotoCheck>("copernica-avoid-goto");
     CheckFactories.registerCheck<DoNotThrowFromNonConstructorsCheck>(
         "copernica-do-not-throw-from-non-constructors");
+    CheckFactories.registerCheck<MembersStartWithUnderscoreCheck>(
+        "copernica-members-start-with-underscore");
   }
 };
 

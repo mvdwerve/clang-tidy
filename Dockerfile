@@ -10,3 +10,5 @@ ADD ./inject.sh /llvm-project/
 RUN cd /llvm-project && chmod +x ./inject.sh && ./inject.sh
 RUN mkdir /llvm-project/build && cd /llvm-project/build && cmake -DLLVM_ENABLE_PROJECTS="clang;clang-tools-extra" -DLLVM_USE_LINKER=gold -DCMAKE_BUILD_TYPE=Release -DLLVM_STATIC_LINK_CXX_STDLIB=ON -G Ninja ../llvm
 RUN cd /llvm-project/build && ninja clang-tidy && cp /llvm-project/build/bin/clang-tidy /usr/bin/
+ 
+WORKDIR /llvm-project/build
