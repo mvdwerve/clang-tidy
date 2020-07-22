@@ -2,6 +2,9 @@ FROM ubuntu:18.04
 
 ENV DEBIAN_FRONTEND noninteractive
 
+RUN apt update && apt install -y gpgv2 wget software-properties-common
+RUN wget -O - https://apt.kitware.com/keys/kitware-archive-latest.asc 2>/dev/null | gpg --dearmor - | tee /etc/apt/trusted.gpg.d/kitware.gpg >/dev/null
+RUN apt-add-repository 'deb https://apt.kitware.com/ubuntu/ bionic main'
 RUN apt update && apt install -y build-essential cmake git ninja-build python3
 RUN git clone --depth 1 https://github.com/llvm/llvm-project.git
 RUN cd /llvm-project/ && git checkout -b release/10.x
