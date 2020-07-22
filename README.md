@@ -41,6 +41,9 @@ make -j4 clang-tidy
 - can be const hint
 - new () not stored should be self-destructing
 - @throws missing / incorrect
+- automate @var for private members
+- autofix docblock variables
+
 
 ### Done
 - don't throw from publicly accessible methods (or methods in general)
