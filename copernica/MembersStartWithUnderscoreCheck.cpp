@@ -19,8 +19,8 @@ namespace copernica {
 void MembersStartWithUnderscoreCheck::registerMatchers(MatchFinder *Finder) {
   // FIXME: Add matchers.
   Finder->addMatcher(
-    // find all private/protected members
-    fieldDecl(unless(isPublic())).bind("field"), this);
+    // find all private/protected members, skip lambdas
+    fieldDecl(unless(anyOf(isPublic(), hasParent(cxxRecordDecl(isLambda()))))).bind("field"), this);
 }
 
 void MembersStartWithUnderscoreCheck::check(const MatchFinder::MatchResult &Result) {

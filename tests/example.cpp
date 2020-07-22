@@ -87,6 +87,11 @@ int main()
 	NonThrow fine;
 
 	BadInherit abc;
+
+	// lambda should be OK
+	[&a]() {
+		return;
+	};
      
 	// not fine
 	throw 5;

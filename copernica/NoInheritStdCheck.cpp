@@ -25,7 +25,7 @@ void NoInheritStdCheck::registerMatchers(MatchFinder *Finder) {
 void NoInheritStdCheck::check(const MatchFinder::MatchResult &Result) {
   // FIXME: Add callback implementation.
   const auto *MatchedDecl = Result.Nodes.getNodeAs<CXXRecordDecl>("class");
-  diag(MatchedDecl->getBeginLoc(), "do not inherit from classes in std namespace") << MatchedDecl->getSourceRange();
+  if (MatchedDecl) diag(MatchedDecl->getBeginLoc(), "do not inherit from classes in std namespace") << MatchedDecl->getSourceRange();
 }
 
 } // namespace copernica

@@ -48,7 +48,7 @@ void DoNotThrowFromNonConstructorsCheck::registerMatchers(MatchFinder *Finder) {
                 hasDeclaration(cxxConstructorDecl(
                     hasDescendant(cxxThrowExpr())
                 ))
-            ),
+            ).bind("construct"),
             cxxTemporaryObjectExpr(
                 unless(
                     caught
@@ -56,9 +56,9 @@ void DoNotThrowFromNonConstructorsCheck::registerMatchers(MatchFinder *Finder) {
                 hasDeclaration(cxxConstructorDecl(
                     hasDescendant(cxxThrowExpr())
                 ))
-            )
+            ).bind("tempconstruct")
         )
-    ).bind("construct"),
+    ),
     this);
 
     // @todo the nested 'throws' should be fixed
@@ -67,12 +67,13 @@ void DoNotThrowFromNonConstructorsCheck::registerMatchers(MatchFinder *Finder) {
 
 void DoNotThrowFromNonConstructorsCheck::check(const MatchFinder::MatchResult &Result) {
 const auto *BadThrow = Result.Nodes.getNodeAs<CXXThrowExpr>("bad_throw");
-const auto *construct = Result.Nodes.getNodeAs<Expr>("construct");
-if (!BadThrow && !construct) return;
+const auto *construct = Result.Nodes.getNodeAs<CXXConstructExpr>("construct");
+const auto *tmpconstruct = Result.Nodes.getNodeAs<CXXTemporaryObjectExpr>("tempconstruct");
 
 //diag(construct->getBeginLoc(), "called");
-if (BadThrow) diag(BadThrow->getSubExpr()->getBeginLoc(), "uncaught exception in non-constructor") << BadThrow->getSourceRange();
-if (construct) diag(construct->getBeginLoc(), "possible uncaught exception from constructor") << construct->getSourceRange();
+if (BadThrow) diag(BadThrow->getBeginLoc(), "uncaught exception in non-constructor") << BadThrow->getSourceRange();
+if (construct) diag(construct->getLocation(), "possible uncaught exception from constructor");
+if (tmpconstruct) diag(tmpconstruct->getLocation(), "possible uncaught exception from constructed temporary");
 }
 
 } // namespace copernica
