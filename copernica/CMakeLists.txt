@@ -8,6 +8,8 @@ add_clang_library(clangTidyCopernicaModule
   CopernicaTidyModule.cpp
   DoNotThrowFromNonConstructorsCheck.cpp
   MembersStartWithUnderscoreCheck.cpp
+  NoInheritStdCheck.cpp
+  VirtualDestructorCheck.cpp
 
   LINK_LIBS
   clangAST

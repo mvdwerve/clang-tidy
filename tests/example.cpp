@@ -1,3 +1,5 @@
+#include <string>
+
 class ABC
 {
 private:
@@ -32,6 +34,8 @@ class ThrowMem
 {
 public:
 	ThrowMem() { throw 10; }
+
+	// no virtual destructor, not allowed
 };
 
 class NoThrowThrowMem
@@ -40,6 +44,8 @@ private:
 	ThrowMem _mem;
 public:
 	NoThrowThrowMem() = default;
+
+	// no virtual destructor, not allowed
 };
 
 class NonThrow
@@ -49,9 +55,15 @@ public:
 	{
 		// does not throw 
 	}
-	
-	// virtual destructor
-	virtual ~NonThrow() = default;
+
+	// virtual destructor, so this is fine
+	virtual ~NonThrow() {}
+};
+
+class BadInherit : std::string
+{
+public:
+	BadInherit() = default;
 };
 
 int main()
@@ -73,6 +85,8 @@ int main()
 
 	// this is fine, doesn't throw
 	NonThrow fine;
+
+	BadInherit abc;
      
 	// not fine
 	throw 5;
