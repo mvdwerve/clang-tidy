@@ -22,9 +22,11 @@ void VirtualDestructorCheck::registerMatchers(MatchFinder *Finder) {
   Finder->addMatcher(
     cxxRecordDecl(
       isDefinition(),
-        hasDescendant(cxxDestructorDecl(
-          unless(isVirtualAsWritten())
-        ).bind("destructor"))
+      isClass(),
+      hasDescendant(cxxDestructorDecl(
+        unless(isVirtualAsWritten())
+      ).bind("destructor")),
+      unless(isLambda())
     ),
     this);
 
@@ -32,7 +34,9 @@ void VirtualDestructorCheck::registerMatchers(MatchFinder *Finder) {
   Finder->addMatcher(
     cxxRecordDecl(
       isDefinition(),
-      unless(hasDescendant(cxxDestructorDecl()))
+      isClass(),
+      unless(hasDescendant(cxxDestructorDecl())),
+      unless(isLambda())
     ).bind("destructorless"),
     this);
 }
