@@ -22,7 +22,8 @@ void VirtualDestructorCheck::registerMatchers(MatchFinder *Finder) {
         isPure(),
         unless(hasDescendant(stmt()))
       )))),
-      has(fieldDecl())
+      has(fieldDecl()),
+      has(cxxConstructorDecl(isUserProvided()))
   );
   
   // FIXME: Add matchers.
@@ -32,7 +33,11 @@ void VirtualDestructorCheck::registerMatchers(MatchFinder *Finder) {
       isDefinition(),
       isClass(),
       has(cxxDestructorDecl(
-        unless(isVirtualAsWritten())
+        unless(isVirtualAsWritten()),
+        anyOf(
+          isUserProvided(),
+          isDefaulted()
+        )
       ).bind("destructor")),
       unless(isLambda()),
       NonPureVirtualClass, // workaround for pure virtual classes
@@ -45,7 +50,7 @@ void VirtualDestructorCheck::registerMatchers(MatchFinder *Finder) {
     cxxRecordDecl(
       isDefinition(),
       isClass(),
-      unless(has(cxxDestructorDecl())),
+      unless(has(cxxDestructorDecl(anyOf(isUserProvided(), isDefaulted())))),
       unless(isLambda()),
       NonPureVirtualClass, // workaround for pure virtual classes
       unless(hasAnyBase(hasType(cxxRecordDecl(unless(NonPureVirtualClass)))))

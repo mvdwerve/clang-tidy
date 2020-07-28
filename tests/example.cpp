@@ -28,6 +28,7 @@ public:
 	}
 
 	// no virtual destructor, not allowed
+	~ABC() = default;
 };
 
 class ThrowMem

@@ -39,7 +39,9 @@ void ShouldBeNoexceptCheck::registerMatchers(MatchFinder *Finder) {
             )
       )),
       unless(hasDescendant(cxxThrowExpr())),
-      unless(isNoThrow())
+      unless(isNoThrow()),
+      unless(isDeleted()),
+      isDefinition() // need a definition or we get a lot of false positives
     ).bind("constructor"),
     this);
 }
