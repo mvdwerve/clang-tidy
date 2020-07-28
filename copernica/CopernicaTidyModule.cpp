@@ -18,6 +18,7 @@
 #include "DoNotThrowFromNonConstructorsCheck.h"
 #include "MembersStartWithUnderscoreCheck.h"
 #include "NoInheritStdCheck.h"
+#include "ShouldBeNoexceptCheck.h"
 #include "VirtualDestructorCheck.h"
 
 namespace clang {
@@ -35,6 +36,8 @@ public:
         "copernica-members-start-with-underscore");
     CheckFactories.registerCheck<NoInheritStdCheck>(
         "copernica-no-inherit-std");
+    CheckFactories.registerCheck<ShouldBeNoexceptCheck>(
+        "copernica-should-be-noexcept");
     CheckFactories.registerCheck<VirtualDestructorCheck>(
         "copernica-virtual-destructor");
   }

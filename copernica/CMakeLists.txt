@@ -9,6 +9,7 @@ add_clang_library(clangTidyCopernicaModule
   DoNotThrowFromNonConstructorsCheck.cpp
   MembersStartWithUnderscoreCheck.cpp
   NoInheritStdCheck.cpp
+  ShouldBeNoexceptCheck.cpp
   VirtualDestructorCheck.cpp
 
   LINK_LIBS

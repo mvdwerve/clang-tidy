@@ -64,6 +64,15 @@ class BadInherit : std::string
 {
 public:
 	BadInherit() = default;
+
+	// no virtual destructor
+};
+
+class Handler
+{
+	// this is fine, no virtual destructors
+	virtual void onSomething() = 0;
+	virtual void onOther() = 0;
 };
 
 int main()

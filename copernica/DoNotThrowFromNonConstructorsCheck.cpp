@@ -22,7 +22,9 @@ void DoNotThrowFromNonConstructorsCheck::registerMatchers(MatchFinder *Finder) {
         // we have a try statement surrounding it
         hasAncestor(cxxTryStmt()), 
         // or a constructor is declared
-        hasAncestor(cxxConstructorDecl())
+        hasAncestor(cxxConstructorDecl()),
+        // or a method is private
+        hasAncestor(cxxMethodDecl(isPrivate()))
     );
 
   // find all direct throw expressions
