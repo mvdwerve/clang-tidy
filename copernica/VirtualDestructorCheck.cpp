@@ -26,7 +26,6 @@ void VirtualDestructorCheck::registerMatchers(MatchFinder *Finder) {
       has(cxxConstructorDecl(isUserProvided()))
   );
   
-  // FIXME: Add matchers.
   // find all class definitions with destructors that are not virtual
   Finder->addMatcher(
     cxxRecordDecl(
