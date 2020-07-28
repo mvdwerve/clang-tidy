@@ -75,6 +75,16 @@ class Handler
 	virtual void onOther() = 0;
 };
 
+class HandlerImpl : public Handler
+{
+	std::string _member;
+
+	virtual void onSomething() override {}
+	virtual void onOther() override {}
+
+	~HandlerImpl() {}
+};
+
 int main()
 {
 	try {

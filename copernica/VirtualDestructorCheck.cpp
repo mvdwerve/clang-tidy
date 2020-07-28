@@ -17,6 +17,14 @@ namespace tidy {
 namespace copernica {
 
 void VirtualDestructorCheck::registerMatchers(MatchFinder *Finder) {
+  auto NonPureVirtualClass = anyOf(
+      has(cxxMethodDecl(isUserProvided(), unless(anyOf(
+        isPure(),
+        unless(hasDescendant(stmt()))
+      )))),
+      has(fieldDecl())
+  );
+  
   // FIXME: Add matchers.
   // find all class definitions with destructors that are not virtual
   Finder->addMatcher(
@@ -27,10 +35,8 @@ void VirtualDestructorCheck::registerMatchers(MatchFinder *Finder) {
         unless(isVirtualAsWritten())
       ).bind("destructor")),
       unless(isLambda()),
-      anyOf(
-        has(cxxMethodDecl(isUserProvided(), unless(isPure()))),
-        has(fieldDecl())
-      )  // workaround for pure virtual classes
+      NonPureVirtualClass, // workaround for pure virtual classes
+      unless(hasAnyBase(hasType(cxxRecordDecl(unless(NonPureVirtualClass)))))
     ),
     this);
 
@@ -41,10 +47,8 @@ void VirtualDestructorCheck::registerMatchers(MatchFinder *Finder) {
       isClass(),
       unless(has(cxxDestructorDecl())),
       unless(isLambda()),
-      anyOf(
-        has(cxxMethodDecl(isUserProvided(), unless(isPure()))),
-        has(fieldDecl())
-      ) // workaround for pure virtual classes
+      NonPureVirtualClass, // workaround for pure virtual classes
+      unless(hasAnyBase(hasType(cxxRecordDecl(unless(NonPureVirtualClass)))))
     ).bind("destructorless"),
     this);
 }
