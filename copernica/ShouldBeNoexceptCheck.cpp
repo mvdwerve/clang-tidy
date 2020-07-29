@@ -10,6 +10,9 @@
 #include "clang/AST/ASTContext.h"
 #include "clang/ASTMatchers/ASTMatchFinder.h"
 
+#include "clang/Lex/Lexer.h"
+#include "clang/Tooling/FixIt.h"
+
 using namespace clang::ast_matchers;
 
 namespace clang {
@@ -48,9 +51,42 @@ void ShouldBeNoexceptCheck::registerMatchers(MatchFinder *Finder) {
 
 void ShouldBeNoexceptCheck::check(const MatchFinder::MatchResult &Result) {
   // FIXME: Add callback implementation.
-  const auto *MatchedDecl = Result.Nodes.getNodeAs<CXXConstructorDecl>("constructor");
-  if (MatchedDecl) diag(MatchedDecl->getBeginLoc(), "constructor should be noexcept as it does not throw and has no throwing member variables");
-  }
+  const auto *Decl = Result.Nodes.getNodeAs<CXXConstructorDecl>("constructor");
+
+  if (!Decl) return;
+
+    const auto *ProtoType = Decl->getType()->getAs<FunctionProtoType>();
+
+    if (!ProtoType) return;
+
+    if (isUnresolvedExceptionSpec(ProtoType->getExceptionSpecType()))
+      return;
+
+    if (isNoexceptExceptionSpec(ProtoType->getExceptionSpecType())) return;
+
+    
+      // Add FixIt hints.
+      SourceManager &SM = *Result.SourceManager;
+
+      SourceLocation NoexceptLoc;
+      
+      if (Decl->getNumParams() > 0)
+        NoexceptLoc = Decl->getParamDecl(Decl->getNumParams() - 1)
+                                       ->getSourceRange()
+                                       .getEnd();
+      else NoexceptLoc = Lexer::getLocForEndOfToken(Decl->getBeginLoc(), 0, SM, Result.Context->getLangOpts());
+      if (!NoexceptLoc.isValid()) return;
+
+      NoexceptLoc = Lexer::findLocationAfterToken(
+          NoexceptLoc, tok::r_paren, SM, Result.Context->getLangOpts(), false);
+      auto Diag = diag(Decl->getLocation(), "constructor should be noexcept as it does not throw and has no throwing member variables %0") << NoexceptLoc.printToString(SM);
+    
+      if (!NoexceptLoc.isValid()) return;
+
+
+
+        Diag << FixItHint::CreateInsertion(NoexceptLoc, " noexcept ");
+}
 
 } // namespace copernica
 } // namespace tidy

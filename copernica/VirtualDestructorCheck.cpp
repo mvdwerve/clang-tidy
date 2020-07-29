@@ -10,6 +10,9 @@
 #include "clang/AST/ASTContext.h"
 #include "clang/ASTMatchers/ASTMatchFinder.h"
 
+#include "clang/Lex/Lexer.h"
+#include "clang/Tooling/FixIt.h"
+
 using namespace clang::ast_matchers;
 
 namespace clang {
@@ -35,7 +38,7 @@ void VirtualDestructorCheck::registerMatchers(MatchFinder *Finder) {
         unless(isVirtualAsWritten()),
         anyOf(
           isUserProvided(),
-          isDefaulted()
+          allOf(isDefaulted(), unless(isImplicit()))
         )
       ).bind("destructor")),
       unless(isLambda()),
@@ -49,7 +52,7 @@ void VirtualDestructorCheck::registerMatchers(MatchFinder *Finder) {
     cxxRecordDecl(
       isDefinition(),
       isClass(),
-      unless(has(cxxDestructorDecl(anyOf(isUserProvided(), isDefaulted())))),
+      unless(has(cxxDestructorDecl(anyOf(isUserProvided(), isDefaulted(), isImplicit())))),
       unless(isLambda()),
       NonPureVirtualClass, // workaround for pure virtual classes
       unless(hasAnyBase(hasType(cxxRecordDecl(unless(NonPureVirtualClass)))))

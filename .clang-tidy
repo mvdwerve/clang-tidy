@@ -17,6 +17,7 @@ Checks: '
     -clang-analyzer-security.insecureAPI.*,
     -bugprone-forward-declaration-namespace,
     -bugprone-narrowing-conversions,
+    -bugprone-reserved-identifier,
     -performance-move-const-arg,
     -clang-analyzer-optin.cplusplus.VirtualCall,
     -clang-analyzer-cplusplus.NewDelete,
