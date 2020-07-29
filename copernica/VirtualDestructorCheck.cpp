@@ -64,8 +64,23 @@ void VirtualDestructorCheck::check(const MatchFinder::MatchResult &Result) {
   const auto *destructor = Result.Nodes.getNodeAs<CXXDestructorDecl>("destructor");
   const auto *destructorless = Result.Nodes.getNodeAs<CXXRecordDecl>("destructorless");
 
-  if (destructor)     diag(destructor->getBeginLoc(), "destructor must be virtual") << destructor->getSourceRange();
   if (destructorless) diag(destructorless->getBeginLoc(), "destructor must be defined and virtual") << destructorless->getSourceRange();
+
+  if (!destructor) return;
+
+  // the diagnostic
+  auto Diag = diag(destructor->getBeginLoc(), "destructor must be virtual");
+
+  const auto *ProtoType = destructor->getType()->getAs<FunctionProtoType>();
+
+  if (!ProtoType) return;
+
+  // get the begin location
+  SourceLocation VirtualLoc = destructor->getBeginLoc();
+
+  if (!VirtualLoc.isValid()) return;
+
+  Diag << FixItHint::CreateInsertion(VirtualLoc, "virtual ");
 }
 
 } // namespace copernica
