@@ -28,6 +28,9 @@ void VirtualDestructorCheck::registerMatchers(MatchFinder *Finder) {
       has(fieldDecl()),
       has(cxxConstructorDecl(isUserProvided()))
   );
+
+  // non-virtual destructor base
+  auto BaseWithNonVirtual = hasAnyBase(hasType(cxxRecordDecl(anyOf(has(cxxDestructorDecl(unless(isVirtual()))), unless(isClass())))));
   
   // find all class definitions with destructors that are not virtual
   Finder->addMatcher(
@@ -43,7 +46,8 @@ void VirtualDestructorCheck::registerMatchers(MatchFinder *Finder) {
       ).bind("destructor")),
       unless(isLambda()),
       NonPureVirtualClass, // workaround for pure virtual classes
-      unless(hasAnyBase(hasType(cxxRecordDecl(unless(NonPureVirtualClass)))))
+      unless(hasAnyBase(hasType(cxxRecordDecl(unless(NonPureVirtualClass))))),
+      unless(BaseWithNonVirtual)
     ),
     this);
 
@@ -55,7 +59,8 @@ void VirtualDestructorCheck::registerMatchers(MatchFinder *Finder) {
       unless(has(cxxDestructorDecl(anyOf(isUserProvided(), isDefaulted(), isImplicit())))),
       unless(isLambda()),
       NonPureVirtualClass, // workaround for pure virtual classes
-      unless(hasAnyBase(hasType(cxxRecordDecl(unless(NonPureVirtualClass)))))
+      unless(hasAnyBase(hasType(cxxRecordDecl(unless(NonPureVirtualClass))))),
+      unless(BaseWithNonVirtual)
     ).bind("destructorless"),
     this);
 }

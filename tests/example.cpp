@@ -1,4 +1,5 @@
 #include <string>
+#include <deque>
 
 class ABC
 {
@@ -49,6 +50,24 @@ public:
 	// no virtual destructor, not allowed
 };
 
+class ThrowInStd
+{
+private:
+	std::deque<std::string> _queue;
+
+public:
+	ThrowInStd() = default;
+};
+
+class ThrowInStdEmptyBody
+{
+private:
+	std::deque<std::string> _queue;
+
+public:
+	ThrowInStdEmptyBody() {}
+};
+
 class NonThrow
 {
 public:
@@ -61,12 +80,20 @@ public:
 	virtual ~NonThrow() {}
 };
 
+struct NonVirt {};
+
 class BadInherit : std::string
 {
 public:
 	BadInherit() = default;
 
 	// no virtual destructor
+};
+
+class Abc : public NonVirt 
+{
+public:
+	~Abc() = default;
 };
 
 class Handler

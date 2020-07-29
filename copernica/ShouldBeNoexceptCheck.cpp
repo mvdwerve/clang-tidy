@@ -23,6 +23,7 @@ void ShouldBeNoexceptCheck::registerMatchers(MatchFinder *Finder)
     Finder->addMatcher(cxxConstructorDecl(hasParent(cxxRecordDecl(isDefinition(), isClass(), unless(isLambda()))),
                                           unless(hasDescendant(cxxConstructExpr(unless(hasDeclaration(cxxConstructorDecl(anyOf(isInStdNamespace(), isNoThrow()))))))),
                                           unless(hasDescendant(cxxThrowExpr())), unless(isNoThrow()), unless(isDeleted()),
+                                          unless(allOf(isDefaulted(), hasDescendant(cxxConstructExpr(hasDeclaration(cxxConstructorDecl(unless(isNoThrow()))))))),
                                           isDefinition() // need a definition or we get a lot of false positives
                                           )
                            .bind("constructor"),
@@ -61,7 +62,7 @@ void ShouldBeNoexceptCheck::check(const MatchFinder::MatchResult &Result)
 
     if (!NoexceptLoc.isValid()) return;
 
-    Diag << FixItHint::CreateInsertion(NoexceptLoc, " noexcept ");
+    Diag << FixItHint::CreateInsertion(NoexceptLoc, " noexcept");
 }
 
 } // namespace copernica
